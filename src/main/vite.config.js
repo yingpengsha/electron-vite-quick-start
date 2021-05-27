@@ -5,9 +5,6 @@ import autoExternal from 'rollup-plugin-auto-external';
 // https://vitejs.dev/config/
 export default defineConfig({
   build: {
-    emptyOutDir: false,
-    outDir: '../../dist',
-    watch: true,
     lib: {
       entry: path.resolve(__dirname, './index.ts'),
       name: 'main',
