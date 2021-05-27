@@ -10,6 +10,7 @@ const {
   build
 } = require('vite')
 
+let manualRestart
 const MAIN_ROOT = path.resolve(__dirname, '../src/main')
 const RENDERER_ROOT = path.resolve(__dirname, '../src/renderer')
 
@@ -31,6 +32,9 @@ async function buildMainProcess() {
   try {
     const rollupWatcher = await build({
       root: MAIN_ROOT,
+      build: {
+        watch: true
+      }
     })
     return rollupWatcher
   } catch (error) {
@@ -59,7 +63,7 @@ function startElectron(RENDERER_URL) {
   }})
 
   electronProcess.on('close', () => {
-    process.exit()
+    if (!manualRestart) process.exit()
   })
   
   return electronProcess
@@ -71,7 +75,24 @@ async function start() {
   const RENDERER_URL = `http${https ? 's' : ''}://localhost:${port}`
   
   const mainWatcher = await buildMainProcess()
-  const electronProcess = startElectron(RENDERER_URL)
+  let electronProcess = startElectron(RENDERER_URL)
+
+  mainWatcher.on('change', () => {
+    if (electronProcess && electronProcess.kill) {
+      manualRestart = true
+      process.kill(electronProcess.pid)
+      electronProcess = null
+      startElectron(RENDERER_URL)
+
+      setTimeout(() => {
+        manualRestart = false
+      }, 5000)
+    }
+  })
+
+  electronProcess.on('close', () => {
+    mainWatcher.close()
+  })
 }
 
 start()
