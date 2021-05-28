@@ -1,16 +1,11 @@
 const path = require('path')
 const chalk = require('chalk')
 const electron = require('electron')
-const {
-  spawn
-} = require('child_process')
-const {
-  createServer,
-  createLogger,
-  build
-} = require('vite')
+const { spawn } = require('child_process')
+const { createServer, createLogger, build } = require('vite')
 
 let manualRestart
+let electronProcess 
 const MAIN_ROOT = path.resolve(__dirname, '../src/main')
 const RENDERER_ROOT = path.resolve(__dirname, '../src/renderer')
 
@@ -28,15 +23,24 @@ async function startRenderer() {
   }
 }
 
-async function buildMainProcess() {
+async function watchMainProcess() {
   try {
     const rollupWatcher = await build({
       root: MAIN_ROOT,
+      mode: 'development',
       build: {
+        emptyOutDir: false,
+        outDir: path.resolve(__dirname, '../dist/dev'),
         watch: true
       }
     })
-    return rollupWatcher
+    return await new Promise((resolve, reject) => {
+      rollupWatcher.on('event', (event) => {
+        if (event.code === 'BUNDLE_END') {
+          resolve(rollupWatcher)
+        }
+      })
+    })
   } catch (error) {
     createLogger().error(
       chalk.red(`error during build main process:\n${error.stack}`)
@@ -48,7 +52,7 @@ async function buildMainProcess() {
 function startElectron(RENDERER_URL) {
   let args = [
     '--inspect=5858',
-    path.join(__dirname, '../dist/main.cjs.js'),
+    path.join(__dirname, '../dist/dev/main.cjs.js'),
   ]
 
   // detect yarn or npm and process commandline args accordingly
@@ -58,15 +62,13 @@ function startElectron(RENDERER_URL) {
     args = args.concat(process.argv.slice(2))
   }
 
-  const electronProcess = spawn(electron, args, {env: {
+  electronProcess = spawn(electron, args, {env: {
     RENDERER_URL
   }})
 
   electronProcess.on('close', () => {
     if (!manualRestart) process.exit()
   })
-  
-  return electronProcess
 }
 
 async function start() {
@@ -74,8 +76,9 @@ async function start() {
   const { port = 3000, https = false} = rendererServer.config.server
   const RENDERER_URL = `http${https ? 's' : ''}://localhost:${port}`
   
-  const mainWatcher = await buildMainProcess()
-  let electronProcess = startElectron(RENDERER_URL)
+  const mainWatcher = await watchMainProcess()
+
+  startElectron(RENDERER_URL)
 
   mainWatcher.on('change', () => {
     if (electronProcess && electronProcess.kill) {
@@ -88,10 +91,6 @@ async function start() {
         manualRestart = false
       }, 5000)
     }
-  })
-
-  electronProcess.on('close', () => {
-    mainWatcher.close()
   })
 }
 
