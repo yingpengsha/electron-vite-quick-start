@@ -1,12 +1,6 @@
-import electron from 'electron'
-
-const {
-  app,
-  BrowserWindow
-} = electron
+import { app, BrowserWindow } from 'electron'
 
 function createWindow() {
-  // Create the browser window.
   const mainWindow = new BrowserWindow({ 
     width: 800,
     height: 600
