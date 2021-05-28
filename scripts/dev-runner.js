@@ -3,11 +3,10 @@ const chalk = require('chalk')
 const electron = require('electron')
 const { spawn } = require('child_process')
 const { createServer, createLogger, build } = require('vite')
+const { MAIN_ROOT, RENDERER_ROOT } = require('./constants')
 
 let manualRestart
 let electronProcess 
-const MAIN_ROOT = path.resolve(__dirname, '../src/main')
-const RENDERER_ROOT = path.resolve(__dirname, '../src/renderer')
 
 async function startRenderer() {
   try {
@@ -43,7 +42,7 @@ async function watchMainProcess() {
     })
   } catch (error) {
     createLogger().error(
-      chalk.red(`error during build main process:\n${error.stack}`)
+      chalk.red(`error during watch main process:\n${error.stack}`)
     )
     process.exit(1)
   }
@@ -55,7 +54,6 @@ function startElectron(RENDERER_URL) {
     path.join(__dirname, '../dist/dev/main.cjs.js'),
   ]
 
-  // detect yarn or npm and process commandline args accordingly
   if (process.env.npm_execpath.endsWith('yarn.js')) {
     args = args.concat(process.argv.slice(3))
   } else if (process.env.npm_execpath.endsWith('npm-cli.js')) {

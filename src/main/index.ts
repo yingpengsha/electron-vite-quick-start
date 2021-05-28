@@ -1,4 +1,9 @@
+import * as path from 'path'
 import { app, BrowserWindow } from 'electron'
+
+const loadURL = import.meta.env.PROD
+  ? `file://${path.resolve(__dirname, '../renderer/index.html')}`
+  : process['env'].RENDERER_URL || 'http://localhost:3000'
 
 function createWindow() {
   const mainWindow = new BrowserWindow({ 
@@ -6,9 +11,9 @@ function createWindow() {
     height: 600
   })
 
-  mainWindow.loadURL(process['env'].RENDERER_URL || 'http://localhost:3000')
+  mainWindow.loadURL(loadURL)
 
-  mainWindow.webContents.openDevTools()
+  // mainWindow.webContents.openDevTools()
 }
 
 app.whenReady().then(() => {
