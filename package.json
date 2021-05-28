@@ -1,8 +1,8 @@
 {
-  "name": "vite-electron-quick-start",
+  "name": "electron-vite-quick-start",
   "version": "0.0.0",
   "description": "A Electron application create by Vite",
-  "main": "main.js",
+  "main": "./dist/main/main.cjs.js",
   "repository": "https://github.com/yingpengsha/vite-electron-quick-start.git",
   "author": "Pengsha Ying <810998652@qq.com>",
   "license": "MIT",
@@ -13,11 +13,14 @@
     ]
   },
   "scripts": {
-    "start": "node ./scripts/dev-runner"
+    "start": "node ./scripts/dev-runner",
+    "build": "node ./scripts/build"
   },
   "devDependencies": {
     "chalk": "^4.1.1",
     "electron": "^12.0.8",
+    "electron-builder": "^22.10.5",
+    "listr": "^0.14.3",
     "vite": "^2.3.3"
   }
 }
