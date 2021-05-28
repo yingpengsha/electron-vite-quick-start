@@ -1,21 +1,29 @@
-# vite-electron-quick-start
+# electron-vite-quick-start
+
+The project is managed using yarn monorepo, Therefore, it is recommended to use Yarn as a packages management tool.
 
 ## Usage
 
 ```bash
 # Clone this repository
-git clone https://github.com/yingpegnsha/vite-electron-quick-start
+$ git clone https://github.com/yingpegnsha/electron-vite-quick-start
 # Go into the repository
-cd vite-electron-quick-start
+$ cd electron-vite-quick-start
 # Install dependencies
-yarn install
+$ yarn install
 # Run the app
-yarn run start
+$ yarn run start
+```
+
+## Build
+
+```base
+$ yarn run build
 ```
 
 ## Todo
 
-[Dashboard](https://github.com/yingpengsha/vite-electron-quick-start/projects/1)
+[Dashboard](https://github.com/yingpengsha/electron-vite-quick-start/projects/1)
 
 ## License
 
