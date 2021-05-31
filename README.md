@@ -1,3 +1,7 @@
+<p align="center">
+  <img width="150" src="/public/icons/256x256.png" alt="electron-vite">
+</p>
+
 # electron-vite-quick-start
 
 The project is managed using yarn monorepo, Therefore, it is recommended to use Yarn as a packages management tool.
