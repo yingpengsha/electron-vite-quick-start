@@ -8,7 +8,8 @@ const loadURL = import.meta.env.PROD
 function createWindow() {
   const mainWindow = new BrowserWindow({ 
     width: 800,
-    height: 600
+    height: 600,
+    icon: path.resolve(__dirname, '../../public/icons/256x256.png')
   })
 
   mainWindow.loadURL(loadURL)
