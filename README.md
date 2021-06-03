@@ -11,7 +11,7 @@
 
 ```bash
 # Clone this repository
-$ git clone https://github.com/yingpegnsha/electron-vite-quick-start
+$ git clone https://github.com/yingpengsha/electron-vite-quick-start.git
 # Go into the repository
 $ cd electron-vite-quick-start
 # Install dependencies
