@@ -78,7 +78,11 @@ async function start() {
 
   startElectron(RENDERER_URL)
 
-  mainWatcher.on('change', () => {
+  mainWatcher.on('event', (event) => {
+    if (event.code !== 'BUNDLE_END') {
+      return
+    }
+
     if (electronProcess && electronProcess.kill) {
       manualRestart = true
       process.kill(electronProcess.pid)
