@@ -5,7 +5,7 @@
 # electron-vite-quick-start
 
 - ⚡ **Full stack uses Vite** to run Electron application, including main process.
-- 💡 The project is managed using **yarn monorepo**, Therefore, it is recommended to use **Yarn** as a packages management tool.
+- 💡 The project is managed using **[yarn workspaces](https://classic.yarnpkg.com/en/docs/workspaces/)**, Therefore, it is recommended to use **Yarn** as a packages management tool.
 
 ## Quick usage
 
