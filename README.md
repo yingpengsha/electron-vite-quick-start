@@ -1,6 +1,10 @@
+
+
 <p align="center">
   <img width="150" src="/public/icons/256x256.png" alt="electron-vite">
 </p>
+
+> This project has been included in [awesome-vite](https://github.com/vitejs/awesome-vite).
 
 # electron-vite-quick-start
 
