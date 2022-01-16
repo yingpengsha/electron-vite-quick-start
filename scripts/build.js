@@ -5,7 +5,7 @@ const builder = require('electron-builder')
 const { build: viteBuild, createLogger } = require('vite')
 
 const builderConfig = require('../build.config')
-const { MAIN_ROOT, RENDERER_ROOT } = require('./constants')
+const { MAIN_ROOT, MAIN_PRELOAD_ROOT, RENDERER_ROOT } = require('./constants')
 
 function build() {
   const tasks = new ListR([
@@ -15,7 +15,11 @@ function build() {
     },
     {
       title: 'building main process',
-      task: buildMainProcess
+      task: buildMainProcess(MAIN_ROOT)
+    },
+    {
+      title: 'building main preload process',
+      task: buildMainProcess(MAIN_PRELOAD_ROOT)
     }
   ])
 
@@ -49,20 +53,22 @@ async function buildRenderer() {
   }
 }
 
-async function buildMainProcess() {
-  try {
-    const buildOutput = await viteBuild({
-      root: MAIN_ROOT,
-      build: {
-        outDir: path.resolve(__dirname, '../dist/main'),
-      }
-    })
-    return buildOutput
-  } catch (error) {
-    createLogger().error(
-      chalk.red(`error during build main process:\n${error.stack}`)
-    )
-    process.exit(1)
+function buildMainProcess(root) {
+  return async function () {
+    try {
+      const buildOutput = await viteBuild({
+        root,
+        build: {
+          outDir: path.resolve(__dirname, '../dist/main'),
+        }
+      })
+      return buildOutput
+    } catch (error) {
+      createLogger().error(
+        chalk.red(`error during build main process:\n${error.stack}`)
+      )
+      process.exit(1)
+    }
   }
 }
 

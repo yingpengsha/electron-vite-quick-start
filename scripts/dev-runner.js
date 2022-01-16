@@ -3,7 +3,7 @@ const chalk = require('chalk')
 const electron = require('electron')
 const { spawn } = require('child_process')
 const { createServer, createLogger, build } = require('vite')
-const { MAIN_ROOT, RENDERER_ROOT } = require('./constants')
+const { MAIN_ROOT, MAIN_PRELOAD_ROOT, RENDERER_ROOT } = require('./constants')
 
 let manualRestart
 let electronProcess 
@@ -22,10 +22,10 @@ async function startRenderer() {
   }
 }
 
-async function watchMainProcess() {
+async function watchMainProcess(root) {
   try {
     const rollupWatcher = await build({
-      root: MAIN_ROOT,
+      root,
       mode: 'development',
       build: {
         emptyOutDir: false,
@@ -74,11 +74,12 @@ async function start() {
   const { port = 3000, https = false} = rendererServer.config.server
   const RENDERER_URL = `http${https ? 's' : ''}://localhost:${port}`
   
-  const mainWatcher = await watchMainProcess()
+  const mainWatcher = await watchMainProcess(MAIN_ROOT)
+  const mainPreloadWatcher = await watchMainProcess(MAIN_PRELOAD_ROOT)
 
   startElectron(RENDERER_URL)
 
-  mainWatcher.on('event', (event) => {
+  const manageElectronProcess = (event) => {
     if (event.code !== 'BUNDLE_END') {
       return
     }
@@ -93,7 +94,10 @@ async function start() {
         manualRestart = false
       }, 5000)
     }
-  })
+  }
+
+  mainWatcher.on('event', manageElectronProcess)
+  mainPreloadWatcher.on('event', manageElectronProcess)
 }
 
 start()
