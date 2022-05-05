@@ -61,6 +61,7 @@ function startElectron(RENDERER_URL) {
   }
 
   electronProcess = spawn(electron, args, {env: {
+    ...process.env,
     RENDERER_URL
   }})
 
